@@ -10,4 +10,42 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    public function __construct(Request $request=null){
+        
+		ini_set('display_errors', '1');
+		ini_set('display_startup_errors', '1');
+		error_reporting(E_ALL);
+	}
+
+    public function generate_error($error){
+        $json = [];
+        
+        foreach($error as $key => $val){
+            $json["Errors"][$key] = new \stdClass();
+            $json["Errors"][$key]->ID = $key;
+            $json["Errors"][$key]->Message = $val[0];
+            $json["Errors"] = array_values($json["Errors"]);
+        }
+        $json["Status"] = 1;
+        $json["Message"] = "Invalid Input";
+        return $json;
+    }
+
+    public function generate_response($data){
+        $json["Data"] = $data;
+        $json["Status"] = 0;
+        $json["Message"] = "Success";
+        return json_encode($json);
+    }
+
+    public function add_errors($error,$id,$message){
+        $temp = [];
+        $temp[$id] = array(
+            $message
+        );
+        
+        $error = array_merge($error,$temp);
+        return $error;
+    }
 }

@@ -17,6 +17,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('clear', 'ChargesController@clearSession');
-Route::post('verify', 'ChargesController@test');
-Route::post('get_branch', 'ChargesController@get_branch');
+Route::prefix("web/v1")->group(function(){
+    Route::get('clear', 'ChargesController@clearSession');
+    Route::post('login', 'Login@login');
+    Route::post('get_jemaat', 'Jemaat@get');
+    Route::post('get_friends', 'Friends@get');
+ });

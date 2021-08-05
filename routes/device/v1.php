@@ -17,6 +17,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('clear', 'ChargesController@clearSession');
-Route::post('verify', 'ChargesController@test');
-Route::post('get_branch', 'ChargesController@get_branch');
+Route::prefix("device/v1")->group(function(){
+    Route::get('clear', 'ChargesController@clearSession');
+ });

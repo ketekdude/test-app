@@ -1,24 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\web\v1;
 
 use Validator;
 use DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class ChargesController extends Controller
+class Login extends Controller
 {
 
-    private $isCharged = [100,150,400];
-
-    private $test = 'test';
-
     public function __construct(Request $request=null){
-        
-		ini_set('display_errors', '1');
-		ini_set('display_startup_errors', '1');
-		error_reporting(E_ALL);
+        parent::__construct();
+		
         
 	}
 
@@ -80,6 +74,46 @@ class ChargesController extends Controller
 
         return json_encode($result);
         
+    }
+
+    public function login(Request $request){
+        $post = $request->input();
+        $validator = Validator::make($post, [
+            'Username' => 'required',
+            'Password' => 'required'
+        ]);
+        $json = [];
+        $error = [];
+        if ($validator->fails()) {
+            $error = $validator->errors()->get('*');
+            
+            $json = $this->generate_error($error,$json);
+            return json_encode($json);
+        }
+
+        $result = DB::table('User')
+        ->where(function ($query) use($post) {
+            $query->where(DB::raw('lower("Username")'),strtolower($post['Username']))
+                  ->orWhere(DB::raw('lower("Username")'),strtolower($post['Username']));
+        })
+        ->where(DB::raw('lower("Password")'),strtolower($post['Password']))
+        ->first();
+        if(!$result){
+            $error = $this->add_errors($error,'Login','Login Failed');
+            $json = $this->generate_error($error,$json);
+            return json_encode($json);
+        }
+        if(count($error) > 0){
+            $json = $this->generate_error($error,$json);
+            return json_encode($json);
+        }
+        
+        $json = $this->generate_response($result);
+        return $json;
+    }
+
+    public function check_sessoin(){
+
     }
 
 
