@@ -20,6 +20,13 @@ Route::get('/', function () {
 Route::prefix("web/v1")->group(function(){
     Route::get('clear', 'ChargesController@clearSession');
     Route::post('login', 'Login@login');
+
+    //jemaat pages routing
     Route::post('get_jemaat', 'Jemaat@get');
+    Route::post('save_jemaat', 'Jemaat@save');
+
+
+    //friends pages routing
     Route::post('get_friends', 'Friends@get');
+    Route::post('save_friends', 'Friends@save');
  });

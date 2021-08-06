@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use DB;
 
 class Controller extends BaseController
 {
@@ -47,5 +48,25 @@ class Controller extends BaseController
         
         $error = array_merge($error,$temp);
         return $error;
+    }
+
+    public function upsert($arr,$identifier,$id,$table){
+
+        if($id !== null){
+            $row = DB::table($table)
+            ->where($identifier,$id)
+            ->update($arr);
+            $row = $id;
+        }else{
+            $row = DB::table($table)
+            ->insert($arr);
+            $row = $this->getLastID();
+        }
+        return $row;
+    }
+    public function getLastID(){
+        
+        $newid = \DB::select( \DB::raw('SELECT lastval() id'))[0]->id;
+        return $newid;
     }
 }

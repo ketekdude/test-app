@@ -59,6 +59,37 @@ class Jemaat extends Controller
         return json_encode($json);
     }
 
+    public function save(Request $request){
+        $post = $request->input();
+        // var_dump($post);
+        $validator = Validator::make($post, [
+            'Token' => 'required'
+        ]);
+        $json = [];
+        $error = [];
+
+        if ($validator->fails()) {
+            $error = $validator->errors()->get('*');
+            
+            $json = $this->generate_error($error,$json);
+            return json_encode($json);
+        }
+        $arr = array(
+            'FullName' => $post['FullName'],
+            'Address' => $post['Address'],
+            'FriendsID' => $post['FriendsID'],
+            'Email' => $post['Email'],
+            'Phone' => $post['Phone']
+        );
+        
+        $row = $this->upsert($arr,'JemaatID',@$post['JemaatID'],'Jemaat');
+        $result = array('JemaatID' => $row);
+        
+        
+
+        return $this->generate_response($result);
+    }
+
     public function get(Request $request){
         $post = $request->input();
         // var_dump($post);
@@ -77,14 +108,14 @@ class Jemaat extends Controller
         if(@$post['JemaatID']){
             $result = DB::table('Jemaat as j')
             ->leftjoin('Friends as f','f.FriendsID','=','j.FriendsID')
-            ->select(DB::raw('"FullName", "Email", "Phone", j."Address", "FriendsName", "PrivilegeCardNo", "DOB",j."JemaatID" '))
+            ->select(DB::raw('"FullName", "Email", "Phone", j."Address",j."FriendsID", "FriendsName", "PrivilegeCardNo", "DOB",j."JemaatID" '))
             ->where('Archived',null)
             ->where('JemaatID',$post['JemaatID'])
             ->first();
         }else{
             $result = DB::table('Jemaat as j')
             ->leftjoin('Friends as f','f.FriendsID','=','j.FriendsID')
-            ->select(DB::raw('"FullName", "Email", "Phone", j."Address", "FriendsName", "PrivilegeCardNo", "DOB",j."JemaatID" '))
+            ->select(DB::raw('"FullName", "Email", "Phone", j."Address",j."FriendsID", "FriendsName", "PrivilegeCardNo", "DOB",j."JemaatID" '))
             ->where('Archived',null)
             ->get();
         }
