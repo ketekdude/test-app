@@ -30,4 +30,9 @@ Route::prefix("web/v1")->group(function(){
     Route::post('get_friends', 'Friends@get');
     Route::post('save_friends', 'Friends@save');
     Route::post('delete_friends', 'Friends@delete');
+
+
+    //Divisions pages routing
+    Route::post('get_divisions', 'Divisions@get');
+    Route::post('save_division', 'Divisions@save');
  });
