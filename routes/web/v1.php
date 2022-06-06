@@ -29,4 +29,5 @@ Route::prefix("web/v1")->group(function(){
     //friends pages routing
     Route::post('get_friends', 'Friends@get');
     Route::post('save_friends', 'Friends@save');
+    Route::post('delete_friends', 'Friends@delete');
  });

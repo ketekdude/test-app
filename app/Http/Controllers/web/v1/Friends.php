@@ -54,6 +54,30 @@ class Friends extends Controller
         
         
     }
+
+    public function delete (Request $request){
+        $post = $request->input();
+        // var_dump($post);
+        $validator = Validator::make($post, [
+            'Token' => 'required'
+        ]);
+        $json = [];
+        $error = [];
+        if ($validator->fails()) {
+            $error = $validator->errors()->get('*');
+            
+            $json = $this->generate_error($error,$json);
+            return json_encode($json);
+        }
+
+        $arr = array(
+            'Archived' => 'Y'
+        );
+        
+        $row = $this->upsert($arr,'FriendsID',@$post['FriendsID'],'Friends');
+        $result = array('FriendsID' => $row);        
+        return $this->generate_response($result);
+    }
     
     public function save(Request $request){
         $post = $request->input();
@@ -78,24 +102,7 @@ class Friends extends Controller
         );
         
         $row = $this->upsert($arr,'FriendsID',@$post['FriendsID'],'Friends');
-        $result = array('FriendsID' => $row);
-        // if(@$post['FriendsID']){
-            
-        // }else{
-        //     $arr = array(
-        //         'FriendsName' => $post['FriendsName'],
-        //         'Address' => $post['Address'],
-        //         'FriendsLeaderID' => $post['FriendsLeaderID'],
-        //         'Address' => $post['Address']
-        //     );
-        //     $row = DB::table('Friends')
-        //     ->where('FriendsID',$post['FriendsID'])
-        //     ->update($arr);
-            
-        //     $result = array('rowUpdated' => $row);
-        // }
-        
-        
+        $result = array('FriendsID' => $row);        
 
         return $this->generate_response($result);
     }
